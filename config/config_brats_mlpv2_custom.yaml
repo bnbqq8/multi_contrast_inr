@@ -1,5 +1,5 @@
 SETTINGS:
-  DIRECTORY: '../IXI_dataset/IXI_downsampledx2/' 
+  DIRECTORY: '../IXI_dataset/IXI_downsampledx4_iacl_synthmorph/' 
   PROJECT_NAME: 'IXI dataset'
   GPU_DEVICE: 0
   NUM_WORKERS: 48

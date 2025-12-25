@@ -26,8 +26,6 @@ from utils import (
 )
 from visualization_utils import show_slices_gt
 
-# python3 main.py --logging --config config/config_brats_mlpv2_custom.yaml
-
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -35,10 +33,10 @@ def parse_args():
     )
     parser.add_argument(
         "--config",
-        default="config/config_brats_mlpv2_custom.yaml",
+        default="config.yaml",
         help="config file (.yaml) containing the hyper-parameters for training.",
     )
-    parser.add_argument("--logging", default=True, action="store_true")
+    parser.add_argument("--logging", action="store_true")
     parser.add_argument(
         "--cuda_visible_device",
         nargs="*",
@@ -117,20 +115,14 @@ def main(args):
     # logging run
     if args.logging:
         wandb.login()
-        wandb.init(
-            config=config_dict,
-            project=config.SETTINGS.PROJECT_NAME,
-            name=args.subject_id,
-        )
+        wandb.init(config=config_dict, project=config.SETTINGS.PROJECT_NAME)
 
     # make directory for models
     weight_dir = f"runs/{config.SETTINGS.PROJECT_NAME}_weights"
     image_dir = f"runs/{config.SETTINGS.PROJECT_NAME}_images"
-    patient_image_dir = os.path.join(image_dir, args.subject_id)
 
     pathlib.Path(weight_dir).mkdir(parents=True, exist_ok=True)
     pathlib.Path(image_dir).mkdir(parents=True, exist_ok=True)
-    pathlib.Path(patient_image_dir).mkdir(parents=True, exist_ok=True)
 
     # seeding
     torch.manual_seed(config.TRAINING.SEED)
@@ -811,13 +803,9 @@ def main(args):
                     )
 
             if config.TRAINING.CONTRAST2_ONLY:
-                nifti_name = (
-                    "T2.nii.gz"  # model_name_epoch.replace("model.pt", f"_ct2.nii.gz")
-                )
+                nifti_name = model_name_epoch.replace("model.pt", f"_ct2.nii.gz")
             else:
-                nifti_name = (
-                    "T1.nii.gz"  # model_name_epoch.replace("model.pt", f"_ct1.nii.gz")
-                )
+                nifti_name = model_name_epoch.replace("model.pt", f"_ct1.nii.gz")
 
             slice_0 = img[int(x_dim / 2), :, :]
             slice_1 = img[:, int(y_dim / 2), :]
@@ -845,7 +833,7 @@ def main(args):
             affine = np.array(mgrid_affine)
             img = nib.Nifti1Image(img, affine)
             if epoch == (config.TRAINING.EPOCHS - 1):
-                nib.save(img, os.path.join(patient_image_dir, nifti_name))
+                nib.save(img, os.path.join(image_dir, nifti_name))
 
             if args.logging:
                 wandb.log(wandb_epoch_dict)  # update logs per epoch
