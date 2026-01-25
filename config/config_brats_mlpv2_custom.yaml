@@ -1,6 +1,6 @@
 SETTINGS:
   DIRECTORY: '../IXI_dataset/IXI_downsampledx4_iacl_synthmorph/' 
-  PROJECT_NAME: 'IXI dataset'
+  PROJECT_NAME: 'IXI_dataset'
   GPU_DEVICE: 0
   NUM_WORKERS: 48
 
@@ -12,9 +12,9 @@ DATASET:
 TRAINING:
 
   SEED: 12
-  BATCH_SIZE: 4000
+  BATCH_SIZE: 131072 # 4000 #131072 #128*1024
   LR: 0.0004
-  EPOCHS: 50
+  EPOCHS: 100
   OPTIM: 'Adam'
   SHUFFELING: True
   CONTRAST1_ONLY: False
